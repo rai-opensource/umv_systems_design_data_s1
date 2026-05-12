@@ -7,7 +7,7 @@ The provided dataset contains the specific measurements corresponding to the dyn
 1. Clearance positions for the lateral hopping experiment (Fig. 3);
 2. Clearance height, and electrical power demand for the table jump (Fig. 4A);
 3. Clearance height for the table jump repeatability experiment (Fig.4B); and
-4. Inertia and angular velocity during the front flip (Fig. 5).
+4. Whole-body inertia Iyy and angular velocity during the front flip (Fig. 5).
 
 CoM positions and angular momentum trajectories were also provided for the aforementioned experiments.
 
