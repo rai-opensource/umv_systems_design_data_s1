@@ -17,7 +17,6 @@ All data are provided in MKS units.
 
 ## Nomenclature
 - `timestamps`: Time corresponding to all data except those associated with motors
-
 - `pos_com_hist`: CoM positions (x, y, z)
 - `pos_clear_hist`: Clearance positions (x, y, z)
 - `angmom_wb_hist`: Whole-body angular momentum (x, y, z)
