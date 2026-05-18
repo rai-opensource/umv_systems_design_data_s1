@@ -25,6 +25,6 @@ All data are provided in MKS units.
 - `I_hist`: Whole-body inertia (Ixx, Iyy, Izz)
 - `angvel_base_hist`: Angular velocity of the Bike (x, y, z)
 - `motor_timestamps`: Time corresponding to motor data
-- `motor_current`: Total motor current
-- `motor_voltage`: Bus voltage
-- `motor_power`: Total power draw
+- `motor_current`: Bus current, A
+- `motor_voltage`: Bus voltage, V
+- `motor_power`: Total power draw, W
