@@ -1,6 +1,6 @@
 # umv_systems_design_data_s1
 
-*DISCLAIMER: This data is released as part of a paper submission only.*
+*DISCLAIMER: This data is released as part of a paper submission only. We do not guarantee maintenance.*
 
 Experimental time series data for Supplementary Data S1 in "System Design of the Ultra Mobility Vehicle".
 
@@ -13,4 +13,20 @@ The provided dataset contains the specific measurements corresponding to the dyn
 
 CoM positions and angular momentum trajectories were also provided for the aforementioned experiments.
 
-All data are provided in MKS units.
+All data are provided in MKS units unless otherwise specified.
+
+## Nomenclature
+- $\textit{rt}$: Relative To.
+- $\textit{ewrt}$: Expressed With Respect To.
+- `timestamps`: Time corresponding to all data except those associated with motors
+- `pos_com_hist`: CoM positions (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `pos_clear_hist`: Clearance positions (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `angmom_wb_hist`: Whole-body angular momentum (x, y, z) $\textit{rt}$ the world frame and $\textit{ewrt}$ the robot's bike (base) frame.
+- `h_com_hist`: CoM height (z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `h_clear_hist`: Clearance height (z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `I_hist`: Whole-body inertia (Ixx, Iyy, Izz) $\textit{rt}$ the world frame and $\textit{ewrt}$ the robot's bike (base) frame.
+- `angvel_base_hist`: Angular velocity of the Bike (x, y, z) $\textit{rt}$ the world frame and $\textit{ewrt}$ the robot's bike (base) frame.
+- `motor_timestamps`: Time corresponding to motor data
+- `motor_current`: Bus current, A
+- `motor_voltage`: Bus voltage, V
+- `motor_power`: Total power draw, W
