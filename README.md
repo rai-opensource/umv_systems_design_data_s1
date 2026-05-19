@@ -13,17 +13,19 @@ The provided dataset contains the specific measurements corresponding to the dyn
 
 CoM positions and angular momentum trajectories were also provided for the aforementioned experiments.
 
-All data are provided in MKS units.
+All data are provided in MKS units unless otherwise specified.
 
 ## Nomenclature
+- $\textit{rt}$: Relative To.
+- $\textit{ewrt}$: Expressed With Respect To.
 - `timestamps`: Time corresponding to all data except those associated with motors
-- `pos_com_hist`: CoM positions (x, y, z)
-- `pos_clear_hist`: Clearance positions (x, y, z)
-- `angmom_wb_hist`: Whole-body angular momentum (x, y, z)
-- `h_com_hist`: CoM height (z)
-- `h_clear_hist`: Clearance height (z)
-- `I_hist`: Whole-body inertia (Ixx, Iyy, Izz)
-- `angvel_base_hist`: Angular velocity of the Bike (x, y, z)
+- `pos_com_hist`: CoM positions (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `pos_clear_hist`: Clearance positions (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `angmom_wb_hist`: Whole-body angular momentum (x, y, z) $\textit{rt}$ the world frame and $\textit{ewrt}$ the robot's bike (base) frame.
+- `h_com_hist`: CoM height (z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `h_clear_hist`: Clearance height (z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `I_hist`: Whole-body inertia (Ixx, Iyy, Izz) $\textit{rt}$ the world frame and $\textit{ewrt}$ the robot's bike (base) frame.
+- `angvel_base_hist`: Angular velocity of the Bike (x, y, z) $\textit{rt}$ the world frame and $\textit{ewrt}$ the robot's bike (base) frame.
 - `motor_timestamps`: Time corresponding to motor data
 - `motor_current`: Bus current, A
 - `motor_voltage`: Bus voltage, V
