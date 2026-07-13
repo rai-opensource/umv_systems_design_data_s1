@@ -9,6 +9,6 @@ dependencies = [
     "mpl-fontkit>=0.5.1",
     "numpy>=2.5.1",
     "pandas>=3.0.3",
-    "pyqt5>=5.15.11",
+    "pyqt6>=6.11.0",
     "scikit-learn>=1.9.0",
 ]
