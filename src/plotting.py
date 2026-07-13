@@ -128,9 +128,8 @@ class Plot2D:
         """
         Get the next subplot and add axis labels
 
-        :param ax: Axes object
         :param xlab: x-axis label
-        :param ylab: y_axis label
+        :param ylab: y-axis label
         :param ylab_rotation: y-axis label orientation
         :returns: Axes object
         """
@@ -179,6 +178,7 @@ class Plot2D:
     ) -> None:
         """
         Add legend without duplicate labels
+
         :param ax: Axes object
         :param handles: list of Artists to be added to the legend
         :param zorder: drawing order of artists
@@ -268,6 +268,16 @@ class Plot3D:
         grid: str | None = None,
         **kwargs,
     ):
+        """
+        3D Plot class
+
+        :param name: name of the plot for title and filename
+        :param N_subplots: number of subplots
+        :param title: whether or not to show the title
+        :param grid: specify grid axis for ax.grid(), or None. {'both', 'x', 'y', 'z'}
+        :returns: None
+        """
+
         self.name = name
         self.N_subplots = N_subplots
         self.title = title
@@ -300,7 +310,15 @@ class Plot3D:
         fsize_label: int = 20,
         **kwargs,
     ) -> Axes3D:
-        """move to and return next subplot"""
+        """
+        Get the next subplot and add axis labels
+
+        :param xlab: x-axis label
+        :param ylab: y-axis label
+        :param zlab: z-axis label
+        :param fsize_label: fontsize for labels
+        :returns: Axes3D object
+        """
         self._k += 1
         # ax = self.fig.add_subplot(self.rows, self.cols, self.k)
         if self.N_subplots > 1:
@@ -317,8 +335,7 @@ class Plot3D:
         """
         Make axes of 3D plot have equal scale but inequal aspect
 
-        ## Input
-            ax: matplotlib axis
+        :param ax: Axes3D object
         """
         x_limits = ax.get_xlim3d()
         y_limits = ax.get_ylim3d()
@@ -333,7 +350,8 @@ class Plot3D:
     ) -> None:
         """
         Add legend without duplicate labels
-        :param ax: Axes object
+
+        :param ax: Axes3D object
         :param handles: list of Artists to be added to the legend
         :param zorder: drawing order of artists
         :returns: None
@@ -353,6 +371,14 @@ class Plot3D:
         extension: str = ".png",
         keep_open: bool = False,
     ) -> None:
+        """
+        Save the image to file.
+
+        :param show: whether or not to bring up interactive GUI
+        :param extension: filetype
+        :param keep_open: prevent plot from being closed
+        :returns: None
+        """
         os.makedirs(OUTPUT_DIR, exist_ok=True)
         plt.savefig(OUTPUT_DIR + self.name + extension, dpi=200)
         if show:
