@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import mpl_fontkit as fk
 from matplotlib.axes import Axes
+from matplotlib.artist import Artist
 from matplotlib.transforms import blended_transform_factory
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 import os
@@ -33,6 +34,13 @@ plt.rcParams.update(
 
 
 def get_rows(total: int, cols: int) -> int:
+    """
+    Get number of rows in plot based on total number of subplots and columns
+
+    :param total: number of subplots
+    :param cols: number of columns
+    :returns: number of rows
+    """
     rows = total // cols
     if total % cols != 0:
         rows += 1
@@ -41,13 +49,28 @@ def get_rows(total: int, cols: int) -> int:
 
 @dataclass
 class Vline:
+    """Parameters for plotting a vertical line"""
+
     x: float
+    """x coordinate of vline"""
+
     y: float
+    """y coordinate used for label"""
+
     label: str
+    """label to be optionally added to plot"""
+
     color: str = "gray"
+    """line color of the vline"""
+
     linestyle: str = "dashed"
+    """line style"""
+
     ha: str = "right"
+    """horizontal alignment of label"""
+
     va: str = "top"
+    """vertical alignment of label"""
 
 
 class Plot2D:
@@ -63,10 +86,12 @@ class Plot2D:
         grid: str | None = None,
     ):
         """
-        Plotting class
+        2D Plot class
 
         :param name: name of the plot for title and filename
         :param N_subplots: number of subplots
+        :param cols: number of columns
+        :param fontsize: font size
         :param sharex: whether to share the x-axis
         :param title: whether or not to show the title
         :param gridspec_kw: use to specify ratio of subplot sizes
@@ -100,7 +125,15 @@ class Plot2D:
                 self.axs.grid(axis=grid)
 
     def get_next_subplot(self, xlab: str, ylab: str, ylab_rotation: int = 90) -> Axes:
-        """move to and return next subplot"""
+        """
+        Get the next subplot and add axis labels
+
+        :param ax: Axes object
+        :param xlab: x-axis label
+        :param ylab: y_axis label
+        :param ylab_rotation: y-axis label orientation
+        :returns: Axes object
+        """
         self._k += 1
         # ax = self.fig.add_subplot(self.rows, self.cols, self.k)
         if self.N_subplots > 1:
@@ -112,8 +145,16 @@ class Plot2D:
         ax.set_ylabel(ylab, rotation=ylab_rotation)
         return ax
 
-    def plot_vlines(self, ax: Axes, vlines: list, show_label=True) -> None:
-        # the reason you'd want to do it as a list is that you may want multiple plots with the same vlines representing timesteps
+    def plot_vlines(self, ax: Axes, vlines: list[Vline], show_label=True) -> None:
+        """
+        Plot list of Vline objects.
+        The reason you'd want to do it as a list is that you may want multiple plots with the same vlines representing timesteps
+
+        :param ax: Axes object
+        :param vlines: list of Vlines to be plotted
+        :param show_label: whether or not to display the vline.label
+        :returns: None
+        """
         for vline in vlines:
             if show_label:
                 ax.text(
@@ -130,9 +171,19 @@ class Plot2D:
             )
 
     def add_legend(
-        self, ax: Axes, handles: list | None = None, zorder: int | None = None, **kwargs
+        self,
+        ax: Axes,
+        handles: list[Artist] | None = None,
+        zorder: int | None = None,
+        **kwargs,
     ) -> None:
-        # adds legend without duplicate labels
+        """
+        Add legend without duplicate labels
+        :param ax: Axes object
+        :param handles: list of Artists to be added to the legend
+        :param zorder: drawing order of artists
+        :returns: None
+        """
         if handles is None:
             handles, labels = plt.gca().get_legend_handles_labels()
         else:
@@ -143,18 +194,22 @@ class Plot2D:
             leg.set_zorder(zorder)
 
     def adjust_hspace(self, hspace: float) -> None:
-        # hspace: specify height of padding between subplots
+        """
+        Specify height of padding between subplots
+        :param hspace: height of padding
+        :returns: None
+        """
         self.fig.subplots_adjust(hspace=hspace)
 
     def set_tight_fig(self) -> None:
         """
-        tight_fig: rearrange figure to prevent overlapping labels, etc.
+        Rearrange figure to prevent overlapping labels, etc.
         """
         self.fig.tight_layout()
 
     def set_tight_axes(self) -> None:
         """
-        tight_axes: remove whitespace within axes objects
+        Remove whitespace within axes objects
         """
         plt.axis("tight")
 
@@ -162,8 +217,8 @@ class Plot2D:
         """
         Make axes of 2D plot have equal scale but inequal aspect
 
-        ## Input
-            ax: matplotlib axis
+        :param ax: matplotlib axis
+        :returns: None
         """
         x_limits = ax.get_xlim()
         y_limits = ax.get_ylim()
@@ -178,7 +233,12 @@ class Plot2D:
         keep_open: bool = False,
     ) -> None:
         """
-        show: whether or not to bring up interactive GUI
+        Save the image to file.
+
+        :param show: whether or not to bring up interactive GUI
+        :param extension: filetype
+        :param keep_open: prevent plot from being closed
+        :returns: None
         """
         self.set_tight_axes()
         self.set_tight_fig()
@@ -271,7 +331,13 @@ class Plot3D:
     def add_legend(
         self, ax: Axes, handles: list | None = None, zorder: int | None = None, **kwargs
     ) -> None:
-        # adds legend without duplicate labels
+        """
+        Add legend without duplicate labels
+        :param ax: Axes object
+        :param handles: list of Artists to be added to the legend
+        :param zorder: drawing order of artists
+        :returns: None
+        """
         if handles is None:
             handles, labels = plt.gca().get_legend_handles_labels()
         else:

@@ -1,12 +1,18 @@
 import numpy as np
 from plotting import Plot2D, Plot3D, Vline
 from copy import copy
-from filtering import filter_fftconvolve, get_local_minima
 import pandas as pd
+from scipy import signal
 
 
-def dict_from_csv(filename: str) -> dict:
-    df = pd.read_csv(filename)
+def dict_from_csv(path: str) -> dict[str, np.ndarray]:
+    """
+    Extract timeseries data from csv as dictionary.
+
+    :param path: relative path of file, including extension
+    :returns: data dictionary of timeseries
+    """
+    df = pd.read_csv(path)
     data = {}
     for col in df.columns:
         first = str(df[col].dropna().iloc[0]).strip()
@@ -23,7 +29,33 @@ def dict_from_csv(filename: str) -> dict:
     return data
 
 
+def filter_fftconvolve(
+    data: np.ndarray, size: int = 50, p: float = 0.5, sig: int = 2
+) -> np.ndarray:
+    """
+    filter data using a convolution.
+
+    :param data: input array.
+    :param size:
+            Low size = less smoothing, cutoff frequency gets higher.
+            High size = more smoothing, cutoff frequency gets lower
+    :param p:
+            Low p = sharper.
+            High p = leads to more rectangular but smoother result.
+    :param sig:
+            Low sig = less smoothing.
+            High sig = more smoothing.
+    :returns: filtered array.
+    """
+    window = signal.windows.general_gaussian(size + 1, p=p, sig=sig)
+    filtered = signal.fftconvolve(data, window, mode="same")
+    return (np.average(data) / np.average(filtered)) * filtered
+
+
 def fig_3() -> None:
+    """
+    Generate figure 3, 3D plot of clearance positions for the lateral hopping experiment
+    """
     data = dict_from_csv("csv/fig_3_lateral_hop.csv")
     plot = Plot3D(name="fig_3", N_subplots=1, title=False)
     ax = plot.get_next_subplot(xlab="x (m)", ylab="y (m)", zlab=r"z (m)", labelpad=10)
@@ -67,7 +99,8 @@ def fig_3() -> None:
     h_clear_hist_filtered = filter_fftconvolve(
         pos_clear_hist[:, 2], size=2500, p=50, sig=250
     )
-    hop_indices = get_local_minima(h_clear_hist_filtered, order=100)
+    # get indices of local minima
+    hop_indices = signal.argrelextrema(h_clear_hist_filtered, np.less, order=100)
     footsteps = pos_clear_hist[hop_indices, :]
     heading_vec_hist = data["heading_vec_hist"]
     footstep_heading_vecs = heading_vec_hist[hop_indices, :]
@@ -95,28 +128,10 @@ def fig_3() -> None:
     plot.save_img(extension=".pdf")
 
 
-def get_trials_mean(trials: list) -> np.ndarray:
-    # compute mean
-    N_trial = int(max([len(trial) for trial in trials]))
-    dim = np.shape(trials[0])[1]
-    mean = np.zeros((N_trial, dim))
-    for k in range(N_trial):
-        trials_k = [item for item in trials if len(item) > k]
-        mean[k, :] = np.mean([trial[k] for trial in trials_k], axis=0)
-    return mean
-
-
-def find_split_indices(hist: np.ndarray) -> list:
-    N = len(hist)
-    split_indices = []
-    for k in range(1, N):
-        if hist[k] > 0.1 and hist[k - 1] < 0.1:
-            # going from below to above a certain height tells us the robot has just started jumping
-            split_indices.append(int(np.clip(k - 10, 0, N)))
-    return split_indices
-
-
 def fig_4a() -> None:
+    """
+    Generate figure 4a, clearance height, and electrical power demand for the table jump
+    """
     vlines = [
         Vline(
             x=0.85,
@@ -206,13 +221,22 @@ def fig_4a() -> None:
 
 
 def fig_4b() -> None:
+    """
+    Generate figure 4b, clearance height for the table jump repeatability experiment
+    """
     data = dict_from_csv("csv/fig_4b_table_jump_repeatability.csv")
     plot = Plot3D(name="fig_4b", N_subplots=1, title=False)
     ax = plot.get_next_subplot(xlab="x (m)", ylab="y (m)", zlab=r"z (m)")
     pos_clear_hist = data["pos_clear_hist"]
 
     # split into individual loops
-    split_indices = find_split_indices(pos_clear_hist[:, 2])
+    h_clear_hist = pos_clear_hist[:, 2]
+    N = len(h_clear_hist)
+    split_indices = []
+    for k in range(1, N):
+        if h_clear_hist[k] > 0.1 and h_clear_hist[k - 1] < 0.1:
+            # going from below to above a certain height tells us the robot has just started jumping
+            split_indices.append(int(np.clip(k - 10, 0, N)))
     trials = np.split(pos_clear_hist, split_indices)
     # the first element isn't a full jump
     trials.pop(0)
@@ -220,7 +244,14 @@ def fig_4b() -> None:
         # we only need the first half of each trial, the second half is just driving
         N_trial_half = int(len(trial) / 2)
         trial = trial[:N_trial_half]
-    mean = get_trials_mean(trials)
+
+    # compute mean
+    N_trial = int(max([len(trial) for trial in trials]))
+    dim = np.shape(trials[0])[1]
+    mean = np.zeros((N_trial, dim))
+    for k in range(N_trial):
+        trials_k = [item for item in trials if len(item) > k]
+        mean[k, :] = np.mean([trial[k] for trial in trials_k], axis=0)
 
     ax.plot(
         *mean.T,
@@ -239,6 +270,9 @@ def fig_4b() -> None:
 
 
 def fig_5() -> None:
+    """
+    Generate figure 5, whole-body inertia Iyy and angular velocity during the front flip
+    """
     vlines = [
         Vline(
             x=0.45,
