@@ -21,6 +21,7 @@ All data are provided in MKS units unless otherwise specified.
 - `timestamps`: Time corresponding to all data except those associated with motors
 - `pos_com_hist`: CoM positions (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
 - `pos_clear_hist`: Clearance positions (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `heading_vec_hist`: Heading of the Bike (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
 - `angmom_wb_hist`: Whole-body angular momentum (x, y, z) $\textit{rt}$ the world frame and $\textit{ewrt}$ the robot's bike (base) frame.
 - `h_com_hist`: CoM height (z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
 - `h_clear_hist`: Clearance height (z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
@@ -30,3 +31,22 @@ All data are provided in MKS units unless otherwise specified.
 - `motor_current`: Bus current, A
 - `motor_voltage`: Bus voltage, V
 - `motor_power`: Total power draw, W
+
+## Generating Plots
+
+1. Clone this directory wherever you want.
+
+2. Run the following setup script. Then restart your shell.
+
+    ```shell
+    sudo apt update
+    sudo apt install texlive texlive-latex-extra texlive-fonts-recommended dvipng cm-super texlive-fonts-extra
+    sudo apt install fonts-noto-core fonts-noto  # for Science publication plots
+    sudo apt install zlib1g=1:1.2.11.dfsg-2ubuntu9.2  # this is needed to fix a zlib library compatibility issue
+    wget -qO- https://astral.sh/uv/install.sh | sh
+    ```
+
+3. Run the following in the base directory. An "output" folder will automatically be created, and plots will be saved there in PDF format.
+    ```bash
+    uv run src/main.py
+    ```
