@@ -1,6 +1,6 @@
 # umv_systems_design_data_s1
 
-*DISCLAIMER: This data is released as part of a paper submission only. We do not guarantee maintenance.*
+*DISCLAIMER: This data is released as part of a paper submission only. We do not guarantee maintenance. Users should probably fork the repo if they need modifications.*
 
 Experimental time series data for Supplementary Data S1 in "System Design of the Ultra Mobility Vehicle".
 
@@ -33,6 +33,7 @@ All data are provided in MKS units unless otherwise specified.
 - `motor_power`: Total power draw, W
 
 ## Generating Plots
+The code provided in the [src](src) folder generates the aforementioned four plots.
 
 1. Clone this directory wherever you want.
 
