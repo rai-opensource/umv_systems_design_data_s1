@@ -1,8 +1,11 @@
-import numpy as np
-from plotting import Plot2D, Plot3D, Vline
 from copy import copy
+
+import numpy as np
 import pandas as pd
+from matplotlib.transforms import blended_transform_factory
 from scipy import signal
+
+from plotting import Plot2D, Plot3D, Vline
 
 
 def dict_from_csv(path: str) -> dict[str, np.ndarray]:
@@ -339,8 +342,56 @@ def fig_5() -> None:
     plot.save_img(extension=".pdf")
 
 
+def fig_7a():
+    """
+    Generate figure 7a, study of effect on link mass changes to jump height
+    """
+    LABELS = {
+        "h_com": r"Jump height, $h^*_\text{CoM}$ (m)",
+        "m_0": r"$m_0$",
+        "m_1": r"$m_1$",
+        "m_2": r"$m_2$",
+    }
+    key = "h_com"
+    xlab = "Link mass (kg)"
+    colors = ["blue", "orange", "green"]
+    folder = "csv/fig_7a_mass_study/"
+    output_default = dict_from_csv(folder + "m_default.csv")
+    h_com_default = output_default[key][0]
+    plot = Plot2D(name="fig_7a", title=False)
+    ax = plot.get_next_subplot(xlab, LABELS[key])
+    for i in range(3):
+        indep_var = f"m_{i}"
+        output = dict_from_csv(folder + indep_var + ".csv")
+        # loop thru list of output dicts by variable
+        y = output[key]
+        x = output[indep_var]
+        ax.scatter(x, y, label=LABELS[indep_var], c=colors[i])
+        plot.plot_trendline_aligned(ax, x, y, c=colors[i])
+        ax.scatter(
+            x=output_default[indep_var],
+            y=h_com_default,
+            c=colors[i],
+            s=200,
+        )
+    ax.legend()
+    bt = blended_transform_factory(ax.transAxes, ax.transData)
+    ax.annotate(
+        text="Current Design",
+        xy=(0.5, h_com_default),
+        xycoords=bt,
+        xytext=(0, 5),  # 5 points vertical offset
+        textcoords="offset points",
+        ha="center",
+        va="bottom",
+    )
+    ax.axhline(h_com_default, ls="--", c="purple", zorder=0)
+    plot.save_img(extension=".pdf")
+
+
 if __name__ == "__main__":
     fig_3()
     fig_4a()
     fig_4b()
     fig_5()
+    fig_7a()

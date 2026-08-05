@@ -1,12 +1,14 @@
+import os
 from dataclasses import dataclass
+
+import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import mpl_fontkit as fk
-from matplotlib.axes import Axes
 from matplotlib.artist import Artist
+from matplotlib.axes import Axes
 from matplotlib.transforms import blended_transform_factory
 from mpl_toolkits.mplot3d.axes3d import Axes3D
-import os
 
 OUTPUT_DIR = "output/"
 
@@ -22,13 +24,7 @@ plt.rcParams.update(
         "font.sans-serif": ["Noto Sans"],
         # change default color cycle
         "axes.prop_cycle": matplotlib.cycler(color=["r", "k", "c", "orange"]),
-        "text.latex.preamble": "".join(
-            [
-                r"\usepackage{amsmath}",
-                r"\usepackage[cm]{sfmath}",  # makes arbitrary fonts compat with latex
-                r"\usepackage{bm}",  # for \boldsymbol{}
-            ]
-        ),
+        "text.latex.preamble": r"\usepackage{amsmath}\usepackage[cm]{sfmath}\usepackage{bm}",
     }
 )
 
@@ -82,7 +78,7 @@ class Plot2D:
         fontsize: int = 20,
         sharex: bool = True,
         title: bool = True,
-        gridspec_kw: dict = {},
+        gridspec_kw: dict | None = None,
         grid: str | None = None,
     ):
         """
@@ -103,6 +99,7 @@ class Plot2D:
         self.cols = cols
         self.sharex = sharex
         self.title = title
+        gridspec_kw = {} if gridspec_kw is None else gridspec_kw
 
         plt.rc("font", size=fontsize)
         # --- #
@@ -168,6 +165,37 @@ class Plot2D:
             ax.axvline(
                 vline.x, color=vline.color, label=vline.label, linestyle=vline.linestyle
             )
+
+    def plot_trendline_aligned(
+        self, ax: Axes, x: np.ndarray, y: np.ndarray, c: str
+    ) -> None:
+        """
+        Plot trendline with equation aligned
+
+        :param ax: Axes object
+        :param x: x-axis data
+        :param y: y-axis data
+        :param c: color
+        """
+        z = np.polyfit(x, y, 1)
+        p = np.poly1d(z)
+        equation = f"slope = {z[0]:.2f}"
+        ax.plot(
+            x,
+            p(x),
+            ls="--",
+            c=c,
+        )
+        ax.text(
+            x=x[-1],
+            y=p(x)[-1],
+            s="\n " + equation,
+            rotation=np.rad2deg(np.atan(z[0])),
+            rotation_mode="anchor",
+            ha="right",
+            va="top",
+            transform_rotates_text=True,
+        )
 
     def add_legend(
         self,
@@ -240,9 +268,9 @@ class Plot2D:
         :param keep_open: prevent plot from being closed
         :returns: None
         """
-        self.set_tight_axes()
-        self.set_tight_fig()
         if self.N_subplots > 1:
+            self.set_tight_axes()
+            self.set_tight_fig()
             for ax in self.axs:
                 if self.sharex:
                     ax.label_outer()
@@ -256,7 +284,6 @@ class Plot2D:
             plt.show()
         elif not keep_open:
             plt.close()
-        return None
 
 
 class Plot3D:
@@ -385,4 +412,3 @@ class Plot3D:
             plt.show()
         elif not keep_open:
             plt.close()
-        return None
