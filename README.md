@@ -18,8 +18,6 @@ Also included are simulation data used to generate the design optimization plots
 1. CoM apogee heights corresponding to changes in link masses (Fig. 7A); and
 2. CoM apogee heights corresponding to changes in gear ratios (Fig. 7B).
 
-Note that link masses do not include the mass of electronics and wiring, which are stored as separate parameters.
-
 All data are provided in MKS units unless otherwise specified.
 
 ## Nomenclature
@@ -45,8 +43,6 @@ All data are provided in MKS units unless otherwise specified.
 - `gr_beta`: Gear ratio $\text{GR}_\beta$, for actuators $A_2$ and $A_3$.
 - `gr_alpha`: Gear ratio $\text{GR}_\alpha$, for actuators $A_0$ and $A_1$.
 
-
-
 ## Generating Plots
 The code provided in the [src](src) folder generates the aforementioned four plots.
 
@@ -57,8 +53,11 @@ The code provided in the [src](src) folder generates the aforementioned four plo
     ```shell
     sudo apt update
     sudo apt install texlive texlive-latex-extra texlive-fonts-recommended dvipng cm-super texlive-fonts-extra
-    sudo apt install fonts-noto-core fonts-noto  # for Science publication plots
-    sudo apt install zlib1g=1:1.2.11.dfsg-2ubuntu9.2  # this is needed to fix a zlib library compatibility issue
+    # for Science publication plots
+    sudo apt install fonts-noto-core fonts-noto
+    # this is needed to fix a zlib library compatibility issue
+    sudo apt install zlib1g=1:1.2.11.dfsg-2ubuntu9.2
+    # install uv
     wget -qO- https://astral.sh/uv/install.sh | sh
     ```
 
