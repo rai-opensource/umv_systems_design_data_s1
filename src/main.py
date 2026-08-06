@@ -2,10 +2,11 @@ from copy import copy
 
 import numpy as np
 import pandas as pd
+from matplotlib import patches
 from matplotlib.transforms import blended_transform_factory
 from scipy import signal
 
-from plotting import Plot2D, Plot3D, Vline
+from plotting import Plot2D, Plot3D, Vline, gen_grid
 
 
 def dict_from_csv(path: str) -> dict[str, np.ndarray]:
@@ -389,9 +390,63 @@ def fig_7a():
     plot.save_img(extension=".pdf")
 
 
+def fig_7b():
+    """
+    Generate figure 7b, gear ratio optimization landscape
+    """
+    output = dict_from_csv("csv/fig_7b_gr.csv")
+    plot = Plot2D(name="fig_7b", title=False)
+    ax = plot.get_next_subplot(
+        xlab=r"$\text{GR}_{\boldsymbol{\beta}}$",
+        ylab=r"$\text{GR}_{\boldsymbol{\alpha}}$",
+    )
+    X, Y, Z = gen_grid(x=output["gr_23"], y=output["gr_01"], z=output["h_com"])
+    plot.plot_contour(
+        ax,
+        x=X,
+        y=Y,
+        z=Z,
+        cbarlab=r"Jump height, $h^*_\text{CoM}$ (m)",
+    )
+    ax.scatter(
+        x=450 / 22,
+        y=297 / 22,
+        s=200,
+        c="gold",
+        marker="*",
+        zorder=100,
+        label="Selected ratios",
+    )
+    # practical gear ratio limits
+    lim = 450 / 22
+    vertices = [
+        [lim, 0],
+        [X.max(), 0],
+        [X.max(), Y.max()],
+        [0, Y.max()],
+        [0, lim],
+        [lim, lim],
+        [lim, 0],
+    ]
+    ax.add_patch(
+        patches.Polygon(
+            vertices,
+            facecolor="none",
+            edgecolor="black",
+            hatch="///",
+            linewidth=0.0,  # no outline
+            zorder=10,  # draw on top
+            label="Practical limits",
+        )
+    )
+    plot.add_legend(ax, zorder=11, loc="upper left", framealpha=1.0)
+    plot.save_img(extension=".pdf")
+
+
 if __name__ == "__main__":
     fig_3()
     fig_4a()
     fig_4b()
     fig_5()
     fig_7a()
+    fig_7b()

@@ -1,14 +1,16 @@
+import math
 import os
 from dataclasses import dataclass
 
-import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import mpl_fontkit as fk
+import numpy as np
 from matplotlib.artist import Artist
 from matplotlib.axes import Axes
 from matplotlib.transforms import blended_transform_factory
 from mpl_toolkits.mplot3d.axes3d import Axes3D
+from scipy.interpolate import griddata
 
 OUTPUT_DIR = "output/"
 
@@ -41,6 +43,24 @@ def get_rows(total: int, cols: int) -> int:
     if total % cols != 0:
         rows += 1
     return rows
+
+
+def gen_grid(x: np.ndarray, y: np.ndarray, z: np.ndarray) -> tuple:
+    """
+    Linspace a grid based on x and y bounds and interpolate z values
+
+    :param x: x-axis data
+    :param y: y-axis data
+    :param z: z-axis data
+    """
+    n2 = np.shape(x)[0]
+    n = math.ceil(np.sqrt(n2))
+    xi = np.linspace(x.min(), x.max(), n)
+    yi = np.linspace(y.min(), y.max(), n)
+    # create a uniform spaced grid
+    Z = griddata((x, y), z, (xi[None, :], yi[:, None]), method="nearest")
+    X, Y = np.meshgrid(xi, yi)
+    return X, Y, Z
 
 
 @dataclass
@@ -196,6 +216,29 @@ class Plot2D:
             va="top",
             transform_rotates_text=True,
         )
+
+    def plot_contour(
+        self,
+        ax: Axes,
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray,
+        cbarlab: str,
+        **kwargs,
+    ) -> None:
+        """
+        Use contourf to create a contour map using 3D-equivalent input
+
+        :param ax: Axes object
+        :param x: x-axis data
+        :param y: y-axis data
+        :param z: z-axis data
+        :param cbarlab: Label for colorbar
+        """
+        c = ax.contourf(x, y, z, cmap="coolwarm", **kwargs)
+        ax.axis([x.min(), x.max(), y.min(), y.max()])
+        cbar = self.fig.colorbar(c, ax=ax)
+        cbar.ax.set_ylabel(cbarlab, rotation=-90, va="bottom")
 
     def add_legend(
         self,
