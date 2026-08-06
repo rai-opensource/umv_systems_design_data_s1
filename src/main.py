@@ -348,12 +348,12 @@ def fig_7a():
     Generate figure 7a, study of effect on link mass changes to jump height
     """
     LABELS = {
-        "h_com": r"Jump height, $h^*_\text{CoM}$ (m)",
+        "h_com_star": r"Jump height, $h^*_\text{CoM}$ (m)",
         "m_0": r"$m_0$",
         "m_1": r"$m_1$",
         "m_2": r"$m_2$",
     }
-    key = "h_com"
+    key = "h_com_star"
     xlab = "Link mass (kg)"
     colors = ["blue", "orange", "green"]
     folder = "csv/fig_7a_mass_study/"
@@ -400,7 +400,9 @@ def fig_7b():
         xlab=r"$\text{GR}_{\boldsymbol{\beta}}$",
         ylab=r"$\text{GR}_{\boldsymbol{\alpha}}$",
     )
-    X, Y, Z = gen_grid(x=output["gr_23"], y=output["gr_01"], z=output["h_com"])
+    X, Y, Z = gen_grid(
+        x=output["gr_beta"], y=output["gr_alpha"], z=output["h_com_star"]
+    )
     plot.plot_contour(
         ax,
         x=X,

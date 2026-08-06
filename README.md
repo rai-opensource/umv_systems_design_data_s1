@@ -13,12 +13,19 @@ The provided dataset contains the specific measurements corresponding to the dyn
 
 CoM positions and angular momentum trajectories were also provided for the aforementioned experiments.
 
+Also included are simulation data used to generate the design optimization plots in the main text:
+
+1. CoM apogee heights corresponding to changes in link masses (Fig. 7A); and
+2. CoM apogee heights corresponding to changes in gear ratios (Fig. 7B).
+
+Note that link masses do not include the mass of electronics and wiring, which are stored as separate parameters.
+
 All data are provided in MKS units unless otherwise specified.
 
 ## Nomenclature
 - $\textit{rt}$: Relative To.
 - $\textit{ewrt}$: Expressed With Respect To.
-- `timestamps`: Time corresponding to all data except those associated with motors
+- `timestamps`: Time corresponding to all data except those associated with motors.
 - `pos_com_hist`: CoM positions (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
 - `pos_clear_hist`: Clearance positions (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
 - `heading_vec_hist`: Heading of the Bike (x, y, z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
@@ -27,10 +34,18 @@ All data are provided in MKS units unless otherwise specified.
 - `h_clear_hist`: Clearance height (z) $\textit{rt}$ and $\textit{ewrt}$ the world frame.
 - `I_hist`: Whole-body inertia (Ixx, Iyy, Izz) $\textit{rt}$ the world frame and $\textit{ewrt}$ the robot's bike (base) frame.
 - `angvel_base_hist`: Angular velocity of the Bike (x, y, z) $\textit{rt}$ the world frame and $\textit{ewrt}$ the robot's bike (base) frame.
-- `motor_timestamps`: Time corresponding to motor data
-- `motor_current`: Bus current, A
-- `motor_voltage`: Bus voltage, V
-- `motor_power`: Total power draw, W
+- `motor_timestamps`: Time corresponding to motor data.
+- `motor_current`: Bus current, A.
+- `motor_voltage`: Bus voltage, V.
+- `motor_power`: Total power draw, W.
+- `h_com_star`: CoM height (z) at apogee, $\textit{rt}$ and $\textit{ewrt}$ the world frame.
+- `m_0`: Mass of the Head, kg.
+- `m_1`: Mass of the Neck, kg.
+- `m_2`: Mass of the Bike, kg.
+- `gr_beta`: Gear ratio $\text{GR}_\beta$, for actuators $A_2$ and $A_3$.
+- `gr_alpha`: Gear ratio $\text{GR}_\alpha$, for actuators $A_0$ and $A_1$.
+
+
 
 ## Generating Plots
 The code provided in the [src](src) folder generates the aforementioned four plots.
