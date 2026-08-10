@@ -1,8 +1,12 @@
-import numpy as np
-from plotting import Plot2D, Plot3D, Vline
 from copy import copy
+
+import numpy as np
 import pandas as pd
+from matplotlib import patches
+from matplotlib.transforms import blended_transform_factory
 from scipy import signal
+
+from plotting import Plot2D, Plot3D, Vline, gen_grid
 
 
 def dict_from_csv(path: str) -> dict[str, np.ndarray]:
@@ -339,8 +343,112 @@ def fig_5() -> None:
     plot.save_img(extension=".pdf")
 
 
+def fig_7a():
+    """
+    Generate figure 7a, study of effect on link mass changes to jump height
+    """
+    LABELS = {
+        "h_com_star": r"Jump height, $h^*_\text{CoM}$ (m)",
+        "m_0": r"$m_0$",
+        "m_1": r"$m_1$",
+        "m_2": r"$m_2$",
+    }
+    key = "h_com_star"
+    xlab = "Link mass (kg)"
+    colors = ["blue", "orange", "green"]
+    folder = "csv/fig_7a_mass_study/"
+    output_default = dict_from_csv(folder + "m_default.csv")
+    h_com_default = output_default[key][0]
+    plot = Plot2D(name="fig_7a", title=False)
+    ax = plot.get_next_subplot(xlab, LABELS[key])
+    for i in range(3):
+        indep_var = f"m_{i}"
+        output = dict_from_csv(folder + indep_var + ".csv")
+        # loop thru list of output dicts by variable
+        y = output[key]
+        x = output[indep_var]
+        ax.scatter(x, y, label=LABELS[indep_var], c=colors[i])
+        plot.plot_trendline_aligned(ax, x, y, c=colors[i])
+        ax.scatter(
+            x=output_default[indep_var],
+            y=h_com_default,
+            c=colors[i],
+            s=200,
+        )
+    ax.legend()
+    bt = blended_transform_factory(ax.transAxes, ax.transData)
+    ax.annotate(
+        text="Current Design",
+        xy=(0.5, h_com_default),
+        xycoords=bt,
+        xytext=(0, 5),  # 5 points vertical offset
+        textcoords="offset points",
+        ha="center",
+        va="bottom",
+    )
+    ax.axhline(h_com_default, ls="--", c="purple", zorder=0)
+    plot.save_img(extension=".pdf")
+
+
+def fig_7b():
+    """
+    Generate figure 7b, gear ratio optimization landscape
+    """
+    output = dict_from_csv("csv/fig_7b_gr.csv")
+    plot = Plot2D(name="fig_7b", title=False)
+    ax = plot.get_next_subplot(
+        xlab=r"$\text{GR}_{\boldsymbol{\beta}}$",
+        ylab=r"$\text{GR}_{\boldsymbol{\alpha}}$",
+    )
+    X, Y, Z = gen_grid(
+        x=output["gr_beta"], y=output["gr_alpha"], z=output["h_com_star"]
+    )
+    plot.plot_contour(
+        ax,
+        x=X,
+        y=Y,
+        z=Z,
+        cbarlab=r"Jump height, $h^*_\text{CoM}$ (m)",
+    )
+    ax.scatter(
+        x=450 / 22,
+        y=297 / 22,
+        s=200,
+        c="gold",
+        marker="*",
+        zorder=100,
+        label="Selected ratios",
+    )
+    # practical gear ratio limits
+    lim = 450 / 22
+    vertices = [
+        [lim, 0],
+        [X.max(), 0],
+        [X.max(), Y.max()],
+        [0, Y.max()],
+        [0, lim],
+        [lim, lim],
+        [lim, 0],
+    ]
+    ax.add_patch(
+        patches.Polygon(
+            vertices,
+            facecolor="none",
+            edgecolor="black",
+            hatch="///",
+            linewidth=0.0,  # no outline
+            zorder=10,  # draw on top
+            label="Practical limits",
+        )
+    )
+    plot.add_legend(ax, zorder=11, loc="upper left", framealpha=1.0)
+    plot.save_img(extension=".pdf")
+
+
 if __name__ == "__main__":
     fig_3()
     fig_4a()
     fig_4b()
     fig_5()
+    fig_7a()
+    fig_7b()
